@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useDataState } from '../../context/DataContext';
 import { useScheduleState, minutesToTimeStr, DEFAULT_ENTRY, DEFAULT_EXIT } from '../../context/ScheduleContext';
 import { DataTable } from '../Table/DataTable';
@@ -81,6 +82,44 @@ export function DashboardDepartmentDetail({ department, colorIndex, onBack, onSe
     };
   }, [employeeSummaries]);
 
+  // Compute late arrivals per day for chart
+  const lateByDay = useMemo(() => {
+    if (!parsedData?.attendanceKeys?.departmentKey || !parsedData.attendanceKeys.dateKey) return [];
+    const { departmentKey, dateKey, userIdKey, userNameKey } = parsedData.attendanceKeys;
+    const empKey = userIdKey ?? userNameKey;
+    if (!empKey) return [];
+
+    const dayMap = new Map<string, Set<string>>();
+
+    for (const row of parsedData.rows) {
+      const dept = String(row[departmentKey] ?? '').trim();
+      if (dept !== department) continue;
+
+      const entradaTardia = row['Entrada Tardía'];
+      if (typeof entradaTardia !== 'string' || !entradaTardia.startsWith('Tarde')) continue;
+
+      const dateVal = row[dateKey];
+      const dateStr = dateVal instanceof Date
+        ? dateVal.toLocaleDateString('es-ES')
+        : String(dateVal ?? '');
+      if (!dateStr) continue;
+
+      const empId = String(row[empKey] ?? '').trim();
+      if (!dayMap.has(dateStr)) dayMap.set(dateStr, new Set());
+      dayMap.get(dateStr)!.add(empId);
+    }
+
+    return Array.from(dayMap.entries())
+      .map(([fecha, emps]) => ({ fecha, cantidad: emps.size }))
+      .sort((a, b) => {
+        // Sort by date: parse dd/mm/yyyy
+        const pa = a.fecha.split('/').reverse().join('');
+        const pb = b.fecha.split('/').reverse().join('');
+        return pa.localeCompare(pb);
+      });
+  }, [parsedData, department]);
+
+  const [activeTab, setActiveTab] = useState<'colaboradores' | 'graficas' | 'registros'>('colaboradores');
   const color = DEPT_COLORS[colorIndex % DEPT_COLORS.length];
 
   return (
@@ -130,50 +169,128 @@ export function DashboardDepartmentDetail({ department, colorIndex, onBack, onSe
         </div>
       )}
 
-      {/* Employee summary table */}
-      {employeeSummaries.length > 0 && (
+      {/* Tabs */}
+      <div className="flex gap-1 border-b border-gray-200 mb-6">
+        <button
+          onClick={() => setActiveTab('colaboradores')}
+          className={`px-4 py-2.5 text-sm font-medium transition-colors relative ${
+            activeTab === 'colaboradores'
+              ? 'text-blue-600'
+              : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          Colaboradores
+          {activeTab === 'colaboradores' && (
+            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-t" />
+          )}
+        </button>
+        <button
+          onClick={() => setActiveTab('graficas')}
+          className={`px-4 py-2.5 text-sm font-medium transition-colors relative ${
+            activeTab === 'graficas'
+              ? 'text-blue-600'
+              : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          Gráficas
+          {activeTab === 'graficas' && (
+            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-t" />
+          )}
+        </button>
+        <button
+          onClick={() => setActiveTab('registros')}
+          className={`px-4 py-2.5 text-sm font-medium transition-colors relative ${
+            activeTab === 'registros'
+              ? 'text-blue-600'
+              : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          Registros
+          {activeTab === 'registros' && (
+            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-t" />
+          )}
+        </button>
+      </div>
+
+      {activeTab === 'colaboradores' && (
         <>
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">Colaboradores</h3>
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-gray-50">
-                    <th className="px-4 py-3 text-left font-medium text-gray-600">User ID</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-600">Nombre</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-600">Días registrados</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-600">Llegadas tarde</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-600">Tiempo acumulado tarde</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {employeeSummaries.map((emp) => (
-                    <tr
-                      key={emp.id}
-                      className={`border-t border-gray-100 hover:bg-gray-50 ${onSelectEmployee ? 'cursor-pointer' : ''}`}
-                      onClick={() => onSelectEmployee?.(emp.id)}
-                    >
-                      <td className="px-4 py-2.5 whitespace-nowrap text-gray-600">{emp.id}</td>
-                      <td className="px-4 py-2.5 whitespace-nowrap font-medium text-gray-900">{emp.name}</td>
-                      <td className="px-4 py-2.5 whitespace-nowrap">{emp.totalDays}</td>
-                      <td className={`px-4 py-2.5 whitespace-nowrap font-medium ${emp.lateDays > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                        {emp.lateDays}
-                      </td>
-                      <td className={`px-4 py-2.5 whitespace-nowrap ${emp.lateMinutes > 0 ? 'text-red-600' : 'text-gray-500'}`}>
-                        {emp.lateMinutes > 0 ? fmtMinutes(emp.lateMinutes) : '—'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          {/* Employee summary table */}
+          {employeeSummaries.length > 0 && (
+            <>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">Colaboradores</h3>
+              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-gray-50">
+                        <th className="px-4 py-3 text-left font-medium text-gray-600">User ID</th>
+                        <th className="px-4 py-3 text-left font-medium text-gray-600">Nombre</th>
+                        <th className="px-4 py-3 text-left font-medium text-gray-600">Días registrados</th>
+                        <th className="px-4 py-3 text-left font-medium text-gray-600">Llegadas tarde</th>
+                        <th className="px-4 py-3 text-left font-medium text-gray-600">Tiempo acumulado tarde</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {employeeSummaries.map((emp) => (
+                        <tr
+                          key={emp.id}
+                          className={`border-t border-gray-100 hover:bg-gray-50 ${onSelectEmployee ? 'cursor-pointer' : ''}`}
+                          onClick={() => onSelectEmployee?.(emp.id)}
+                        >
+                          <td className="px-4 py-2.5 whitespace-nowrap text-gray-600">{emp.id}</td>
+                          <td className="px-4 py-2.5 whitespace-nowrap font-medium text-gray-900">{emp.name}</td>
+                          <td className="px-4 py-2.5 whitespace-nowrap">{emp.totalDays}</td>
+                          <td className={`px-4 py-2.5 whitespace-nowrap font-medium ${emp.lateDays > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                            {emp.lateDays}
+                          </td>
+                          <td className={`px-4 py-2.5 whitespace-nowrap ${emp.lateMinutes > 0 ? 'text-red-600' : 'text-gray-500'}`}>
+                            {emp.lateMinutes > 0 ? fmtMinutes(emp.lateMinutes) : '—'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </>
+          )}
+
         </>
       )}
 
-      {/* Filtered table */}
-      <h3 className="text-lg font-semibold text-gray-800 mb-3">Registros del departamento</h3>
-      <DataTable departmentFilter={department} onSelectEmployee={onSelectEmployee} />
+      {activeTab === 'graficas' && (
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <h3 className="text-sm font-medium text-gray-600 mb-4">Llegadas tarde por día</h3>
+          {lateByDay.length > 0 ? (
+            <ResponsiveContainer width="100%" height={350}>
+              <BarChart data={lateByDay} margin={{ top: 5, right: 20, bottom: 60, left: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis
+                  dataKey="fecha"
+                  tick={{ fontSize: 12 }}
+                  angle={-45}
+                  textAnchor="end"
+                  height={80}
+                />
+                <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
+                <Tooltip
+                  formatter={(value: number) => [`${value} persona${value !== 1 ? 's' : ''}`, 'Llegaron tarde']}
+                  labelFormatter={(label) => `Fecha: ${label}`}
+                />
+                <Bar dataKey="cantidad" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={50} />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex items-center justify-center h-48 text-gray-400 text-sm">
+              No se registraron llegadas tarde en este departamento.
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'registros' && (
+        <DataTable departmentFilter={department} onSelectEmployee={onSelectEmployee} />
+      )}
     </div>
   );
 }
