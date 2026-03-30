@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useTheme } from '../../context/ThemeContext';
 import type { Row } from '../../types/data';
 
 interface Props {
@@ -17,6 +18,9 @@ function formatLabel(value: unknown): string {
 }
 
 export function BarChartView({ rows, xKey, yKey, title }: Props) {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
   const data = useMemo(() => {
     const agg: Record<string, number> = {};
     for (const row of rows) {
@@ -31,14 +35,17 @@ export function BarChartView({ rows, xKey, yKey, title }: Props) {
   }, [rows, xKey, yKey]);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4">
-      <h3 className="text-sm font-medium text-gray-600 mb-3">{title}</h3>
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+      <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">{title}</h3>
       <ResponsiveContainer width="100%" height={280}>
         <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-          <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-          <YAxis tick={{ fontSize: 12 }} />
-          <Tooltip />
+          <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#374151' : '#f0f0f0'} />
+          <XAxis dataKey="name" tick={{ fontSize: 12, fill: isDark ? '#9ca3af' : '#666' }} stroke={isDark ? '#4b5563' : '#ccc'} />
+          <YAxis tick={{ fontSize: 12, fill: isDark ? '#9ca3af' : '#666' }} stroke={isDark ? '#4b5563' : '#ccc'} />
+          <Tooltip
+            contentStyle={isDark ? { backgroundColor: '#1f2937', border: '1px solid #374151', color: '#f3f4f6' } : undefined}
+            labelStyle={isDark ? { color: '#f3f4f6' } : undefined}
+          />
           <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>

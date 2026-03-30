@@ -12,11 +12,11 @@ export function Header({ activeView }: { activeView: ViewType }) {
   const { parsedData } = useDataState();
 
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-4">
+    <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">{viewTitles[activeView]}</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{viewTitles[activeView]}</h2>
         {parsedData && (
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-gray-500 dark:text-gray-400">
             {parsedData.sheetName} — {parsedData.rows.length} registros
           </span>
         )}

@@ -24,7 +24,7 @@ export function ScheduleView() {
 
   if (!parsedData?.isAttendance) {
     return (
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-gray-500 dark:text-gray-400">
         <p className="text-sm">Esta vista solo está disponible en modo de asistencia.</p>
       </div>
     );
@@ -33,12 +33,12 @@ export function ScheduleView() {
   const { attendanceKeys } = parsedData;
   if (!attendanceKeys?.departmentKey) {
     return (
-      <div className="text-center py-12 text-gray-500">
-        <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+      <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+        <svg className="w-12 h-12 mx-auto mb-3 text-gray-300 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
         </svg>
         <p className="text-sm">No se detectó una columna de departamento en el archivo.</p>
-        <p className="text-xs text-gray-400 mt-1">Se requiere una columna llamada "Department", "Departamento", "Dept" o "Area".</p>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Se requiere una columna llamada "Department", "Departamento", "Dept" o "Area".</p>
       </div>
     );
   }

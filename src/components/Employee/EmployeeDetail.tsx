@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { useDataState } from '../../context/DataContext';
+import { useTheme } from '../../context/ThemeContext';
 
 interface Props {
   employeeId: string;
@@ -28,12 +29,12 @@ function minutesToTimeStr(minutes: number): string {
 
 function getCellClass(value: unknown, colKey: string): string {
   if (colKey === 'Entrada Tardía' && typeof value === 'string') {
-    if (value.startsWith('Tarde')) return 'text-red-600 font-medium';
-    if (value === 'A tiempo') return 'text-green-600';
+    if (value.startsWith('Tarde')) return 'text-red-600 dark:text-red-400 font-medium';
+    if (value === 'A tiempo') return 'text-green-600 dark:text-green-400';
   }
   if (colKey === 'Salida Tardía' && typeof value === 'string') {
-    if (value.startsWith('Extra')) return 'text-amber-600 font-medium';
-    if (value === 'A tiempo') return 'text-green-600';
+    if (value.startsWith('Extra')) return 'text-amber-600 dark:text-amber-400 font-medium';
+    if (value === 'A tiempo') return 'text-green-600 dark:text-green-400';
   }
   return '';
 }
@@ -51,6 +52,8 @@ const PIE_COLORS = ['#10b981', '#ef4444']; // green, red
 
 export function EmployeeDetail({ employeeId, onBack }: Props) {
   const { parsedData } = useDataState();
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
 
   const data = useMemo(() => {
     if (!parsedData?.isAttendance || !parsedData.attendanceKeys) return null;
@@ -136,9 +139,9 @@ export function EmployeeDetail({ employeeId, onBack }: Props) {
 
   if (!data) {
     return (
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-gray-500 dark:text-gray-400">
         <p className="text-sm">No se encontraron datos para este colaborador.</p>
-        <button onClick={onBack} className="mt-2 text-blue-600 text-sm hover:underline">Volver a lista</button>
+        <button onClick={onBack} className="mt-2 text-blue-600 dark:text-blue-400 text-sm hover:underline">Volver a lista</button>
       </div>
     );
   }
@@ -158,7 +161,7 @@ export function EmployeeDetail({ employeeId, onBack }: Props) {
       <div className="mb-6">
         <button
           onClick={onBack}
-          className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition-colors mb-4"
+          className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors mb-4"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -167,15 +170,15 @@ export function EmployeeDetail({ employeeId, onBack }: Props) {
         </button>
 
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xl font-bold">
+          <div className="w-14 h-14 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 flex items-center justify-center text-xl font-bold">
             {data.employeeName.charAt(0).toUpperCase()}
           </div>
           <div>
-            <h2 className="text-xl font-bold text-gray-900">{data.employeeName}</h2>
-            <div className="flex items-center gap-3 text-sm text-gray-500 mt-0.5">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{data.employeeName}</h2>
+            <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400 mt-0.5">
               {data.empIdDisplay && <span>ID: {data.empIdDisplay}</span>}
               {data.department !== '—' && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs">
                   {data.department}
                 </span>
               )}
@@ -186,16 +189,16 @@ export function EmployeeDetail({ employeeId, onBack }: Props) {
 
       {/* Summary cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
-        <SummaryCard label="Días presentes" value={String(data.totalDays)} color="text-blue-600" />
-        <SummaryCard label="Llegadas tarde" value={`${data.lateDays} de ${data.totalDays}`} sub={`${latePercent}%`} color="text-red-600" />
-        <SummaryCard label="Total tiempo tarde" value={minutesToDisplay(data.totalLateMinutes)} color="text-red-600" />
+        <SummaryCard label="Días presentes" value={String(data.totalDays)} color="text-blue-600 dark:text-blue-400" />
+        <SummaryCard label="Llegadas tarde" value={`${data.lateDays} de ${data.totalDays}`} sub={`${latePercent}%`} color="text-red-600 dark:text-red-400" />
+        <SummaryCard label="Total tiempo tarde" value={minutesToDisplay(data.totalLateMinutes)} color="text-red-600 dark:text-red-400" />
       </div>
 
       {/* Charts + info row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
         {/* Pie chart */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <h3 className="text-sm font-medium text-gray-600 mb-3">Puntualidad</h3>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+          <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Puntualidad</h3>
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie
@@ -213,36 +216,39 @@ export function EmployeeDetail({ employeeId, onBack }: Props) {
                   <Cell key={i} fill={PIE_COLORS[i]} />
                 ))}
               </Pie>
-              <Tooltip />
-              <Legend />
+              <Tooltip
+                contentStyle={isDark ? { backgroundColor: '#1f2937', border: '1px solid #374151', color: '#f3f4f6' } : undefined}
+                labelStyle={isDark ? { color: '#f3f4f6' } : undefined}
+              />
+              <Legend wrapperStyle={isDark ? { color: '#d1d5db' } : undefined} />
             </PieChart>
           </ResponsiveContainer>
         </div>
 
         {/* Quick stats */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <h3 className="text-sm font-medium text-gray-600 mb-4">Resumen de horarios</h3>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+          <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-4">Resumen de horarios</h3>
           <div className="space-y-3">
             <InfoRow label="Entrada más temprana" value={data.earliestEntry} />
             <InfoRow label="Salida más tardía" value={data.latestExit} />
-            <InfoRow label="Días a tiempo" value={`${data.onTimeDays} de ${data.totalDays}`} valueClass="text-green-600" />
-            <InfoRow label="Días con entrada tarde" value={`${data.lateDays} de ${data.totalDays}`} valueClass="text-red-600" />
+            <InfoRow label="Días a tiempo" value={`${data.onTimeDays} de ${data.totalDays}`} valueClass="text-green-600 dark:text-green-400" />
+            <InfoRow label="Días con entrada tarde" value={`${data.lateDays} de ${data.totalDays}`} valueClass="text-red-600 dark:text-red-400" />
             <InfoRow label="Promedio minutos tarde (días tarde)" value={data.lateDays > 0 ? minutesToDisplay(Math.round(data.totalLateMinutes / data.lateDays)) : '—'} />
           </div>
         </div>
       </div>
 
       {/* Records table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="px-5 py-4 border-b border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-700">Registros de asistencia</h3>
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700">
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Registros de asistencia</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50">
+              <tr className="bg-gray-50 dark:bg-gray-900">
                 {data.tableColumns.map((col) => (
-                  <th key={col} className="px-4 py-3 text-left font-medium text-gray-600 whitespace-nowrap">
+                  <th key={col} className="px-4 py-3 text-left font-medium text-gray-600 dark:text-gray-400 whitespace-nowrap">
                     {col}
                   </th>
                 ))}
@@ -250,7 +256,7 @@ export function EmployeeDetail({ employeeId, onBack }: Props) {
             </thead>
             <tbody>
               {data.empRows.map((row, i) => (
-                <tr key={i} className="border-t border-gray-100 hover:bg-gray-50">
+                <tr key={i} className="border-t border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100">
                   {data.tableColumns.map((col) => (
                     <td
                       key={col}
@@ -271,11 +277,11 @@ export function EmployeeDetail({ employeeId, onBack }: Props) {
 
 function SummaryCard({ label, value, sub, color }: { label: string; value: string; sub?: string; color: string }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4">
-      <p className="text-xs text-gray-500 mb-1">{label}</p>
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+      <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{label}</p>
       <p className={`text-lg font-bold ${color}`}>
         {value}
-        {sub && <span className="text-xs font-normal text-gray-400 ml-1">{sub}</span>}
+        {sub && <span className="text-xs font-normal text-gray-400 dark:text-gray-500 ml-1">{sub}</span>}
       </p>
     </div>
   );
@@ -283,9 +289,9 @@ function SummaryCard({ label, value, sub, color }: { label: string; value: strin
 
 function InfoRow({ label, value, valueClass }: { label: string; value: string; valueClass?: string }) {
   return (
-    <div className="flex items-center justify-between py-2 border-b border-gray-50 last:border-b-0">
-      <span className="text-sm text-gray-500">{label}</span>
-      <span className={`text-sm font-semibold ${valueClass ?? 'text-gray-900'}`}>{value}</span>
+    <div className="flex items-center justify-between py-2 border-b border-gray-50 dark:border-gray-700 last:border-b-0">
+      <span className="text-sm text-gray-500 dark:text-gray-400">{label}</span>
+      <span className={`text-sm font-semibold ${valueClass ?? 'text-gray-900 dark:text-gray-100'}`}>{value}</span>
     </div>
   );
 }

@@ -1,3 +1,5 @@
+import { useTheme } from '../../context/ThemeContext';
+
 export type ViewType = 'dashboard' | 'list' | 'charts' | 'schedule';
 
 interface NavItem {
@@ -56,18 +58,19 @@ const navItems: NavItem[] = [
 
 export function Sidebar({ activeView, onChangeView, onReset, isAttendance }: Props) {
   const visibleItems = navItems.filter((item) => !item.attendanceOnly || isAttendance);
+  const { theme, toggleTheme } = useTheme();
 
   return (
-    <aside className="w-56 bg-white border-r border-gray-200 flex flex-col h-screen sticky top-0">
+    <aside className="w-56 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col h-screen sticky top-0">
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-gray-100">
+      <div className="px-5 py-5 border-b border-gray-100 dark:border-gray-800">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
             <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
-          <span className="text-lg font-bold text-gray-900">ChronoTrack</span>
+          <span className="text-lg font-bold text-gray-900 dark:text-gray-100">ChronoTrack</span>
         </div>
       </div>
 
@@ -83,8 +86,8 @@ export function Sidebar({ activeView, onChangeView, onReset, isAttendance }: Pro
                 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
                 transition-colors duration-150
                 ${isActive
-                  ? 'bg-blue-50 text-blue-700 border-l-3 border-blue-600'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400 border-l-3 border-blue-600'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-200'
                 }
               `}
             >
@@ -95,11 +98,26 @@ export function Sidebar({ activeView, onChangeView, onReset, isAttendance }: Pro
         })}
       </nav>
 
-      {/* Reset button */}
-      <div className="px-3 py-4 border-t border-gray-100">
+      {/* Bottom actions */}
+      <div className="px-3 py-4 border-t border-gray-100 dark:border-gray-800 space-y-1">
+        <button
+          onClick={toggleTheme}
+          className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"
+        >
+          {theme === 'light' ? (
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+            </svg>
+          ) : (
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+            </svg>
+          )}
+          {theme === 'light' ? 'Modo oscuro' : 'Modo claro'}
+        </button>
         <button
           onClick={onReset}
-          className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+          className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />

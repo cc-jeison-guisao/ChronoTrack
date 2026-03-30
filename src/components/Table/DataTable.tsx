@@ -15,12 +15,12 @@ function formatCell(value: unknown): string {
 
 function getCellClass(value: unknown, colKey: string): string {
   if (colKey === 'Entrada Tardía' && typeof value === 'string') {
-    if (value.startsWith('Tarde')) return 'text-red-600 font-medium';
-    if (value === 'A tiempo') return 'text-green-600';
+    if (value.startsWith('Tarde')) return 'text-red-600 dark:text-red-400 font-medium';
+    if (value === 'A tiempo') return 'text-green-600 dark:text-green-400';
   }
   if (colKey === 'Salida Tardía' && typeof value === 'string') {
-    if (value.startsWith('Extra')) return 'text-amber-600 font-medium';
-    if (value === 'A tiempo') return 'text-green-600';
+    if (value.startsWith('Extra')) return 'text-amber-600 dark:text-amber-400 font-medium';
+    if (value === 'A tiempo') return 'text-green-600 dark:text-green-400';
   }
   return '';
 }
@@ -86,11 +86,11 @@ export function DataTable({ onSelectEmployee, departmentFilter }: Props) {
 
   return (
     <div className="relative">
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
       {/* Toolbar */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 flex-wrap gap-3">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-700 flex-wrap gap-3">
         <div className="flex items-center gap-2">
-          <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="w-4 h-4 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           <input
@@ -98,31 +98,31 @@ export function DataTable({ onSelectEmployee, departmentFilter }: Props) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar por nombre, ID..."
-            className="text-sm border-none outline-none bg-transparent w-52"
+            className="text-sm border-none outline-none bg-transparent w-52 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
           />
         </div>
 
         {/* Date filters */}
         {dateKey && (
           <div className="flex items-center gap-2 text-sm">
-            <span className="text-gray-500">Desde</span>
+            <span className="text-gray-500 dark:text-gray-400">Desde</span>
             <input
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="border border-gray-200 rounded px-2 py-1 text-sm"
+              className="border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded px-2 py-1 text-sm dark:[color-scheme:dark]"
             />
-            <span className="text-gray-500">Hasta</span>
+            <span className="text-gray-500 dark:text-gray-400">Hasta</span>
             <input
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="border border-gray-200 rounded px-2 py-1 text-sm"
+              className="border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded px-2 py-1 text-sm dark:[color-scheme:dark]"
             />
             {(dateFrom || dateTo) && (
               <button
                 onClick={() => { setDateFrom(''); setDateTo(''); }}
-                className="text-xs text-blue-600 hover:text-blue-800"
+                className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
               >
                 Limpiar
               </button>
@@ -132,23 +132,23 @@ export function DataTable({ onSelectEmployee, departmentFilter }: Props) {
 
         {/* Late entry filter */}
         {isAttendance && (
-          <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none">
+          <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={onlyLateEntry}
               onChange={(e) => setOnlyLateEntry(e.target.checked)}
-              className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
+              className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-red-600 focus:ring-red-500"
             />
             Solo entrada tardía
           </label>
         )}
 
-        <div className="flex items-center gap-3 text-sm text-gray-500">
+        <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
           <span>{filteredRows.length} registros</span>
           <select
             value={pageSize}
             onChange={(e) => setPageSize(Number(e.target.value))}
-            className="border border-gray-200 rounded px-2 py-1 text-sm"
+            className="border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded px-2 py-1 text-sm"
           >
             <option value={25}>25</option>
             <option value={50}>50</option>
@@ -161,12 +161,12 @@ export function DataTable({ onSelectEmployee, departmentFilter }: Props) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-gray-50">
+            <tr className="bg-gray-50 dark:bg-gray-900">
               {columns.map((col) => (
                 <th
                   key={col.key}
                   onClick={() => toggleSort(col.key)}
-                  className="px-4 py-3 text-left font-medium text-gray-600 cursor-pointer hover:bg-gray-100 select-none whitespace-nowrap"
+                  className="px-4 py-3 text-left font-medium text-gray-600 dark:text-gray-400 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 select-none whitespace-nowrap"
                 >
                   <span className="flex items-center gap-1">
                     {col.label}
@@ -187,7 +187,7 @@ export function DataTable({ onSelectEmployee, departmentFilter }: Props) {
               return (
                 <tr
                   key={i}
-                  className={`border-t border-gray-100 hover:bg-gray-50 ${canClick ? 'cursor-pointer' : ''}`}
+                  className={`border-t border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100 ${canClick ? 'cursor-pointer' : ''}`}
                   onClick={() => {
                     if (canClick) onSelectEmployee(String(row[empKey] ?? ''));
                   }}
@@ -209,22 +209,22 @@ export function DataTable({ onSelectEmployee, departmentFilter }: Props) {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 text-sm">
-          <span className="text-gray-500">
+        <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-gray-700 text-sm">
+          <span className="text-gray-500 dark:text-gray-400">
             Página {page + 1} de {totalPages}
           </span>
           <div className="flex gap-1">
             <button
               onClick={() => setPage(page - 1)}
               disabled={page === 0}
-              className="px-3 py-1 rounded border border-gray-200 disabled:opacity-40 hover:bg-gray-50"
+              className="px-3 py-1 rounded border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               Anterior
             </button>
             <button
               onClick={() => setPage(page + 1)}
               disabled={page >= totalPages - 1}
-              className="px-3 py-1 rounded border border-gray-200 disabled:opacity-40 hover:bg-gray-50"
+              className="px-3 py-1 rounded border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               Siguiente
             </button>

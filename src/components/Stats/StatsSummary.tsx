@@ -64,26 +64,26 @@ export function StatsSummary({ onSelectDepartment }: Props) {
       <div className="space-y-4">
         {/* Global metrics */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
-            <p className="text-2xl font-bold text-blue-600">{totalEmployees}</p>
-            <p className="text-sm text-gray-500">Colaboradores</p>
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center">
+            <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{totalEmployees}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Colaboradores</p>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
-            <p className="text-2xl font-bold text-purple-600">{totalDepartments}</p>
-            <p className="text-sm text-gray-500">Departamentos</p>
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center">
+            <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{totalDepartments}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Departamentos</p>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
-            <p className="text-2xl font-bold text-red-600">{totalLateEmployees}</p>
-            <p className="text-sm text-gray-500">Llegaron tarde</p>
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center">
+            <p className="text-2xl font-bold text-red-600 dark:text-red-400">{totalLateEmployees}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Llegaron tarde</p>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
-            <p className="text-2xl font-bold text-green-600">{totalRecords}</p>
-            <p className="text-sm text-gray-500">Registros</p>
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center">
+            <p className="text-2xl font-bold text-green-600 dark:text-green-400">{totalRecords}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Registros</p>
           </div>
         </div>
 
         {/* Per-department cards */}
-        <h2 className="text-lg font-semibold text-gray-800">Resumen por Departamento</h2>
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Resumen por Departamento</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {departmentSummaries.map((s, i) => (
             <DepartmentCard
@@ -103,7 +103,7 @@ export function StatsSummary({ onSelectDepartment }: Props) {
 
   return (
     <div>
-      <h2 className="text-lg font-semibold text-gray-800 mb-3">Resumen Estadístico</h2>
+      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">Resumen Estadístico</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {stats.map((stat) => (
           <StatCard key={stat.key} stat={stat} />

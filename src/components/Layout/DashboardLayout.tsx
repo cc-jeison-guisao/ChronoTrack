@@ -30,7 +30,7 @@ export function DashboardLayout() {
   }, [activeView]);
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950">
       <Sidebar
         activeView={activeView}
         onChangeView={setActiveView}
@@ -41,11 +41,11 @@ export function DashboardLayout() {
         <Header activeView={activeView} />
         <main className="flex-1 p-6 overflow-auto">
           {showAlert && (
-            <div className="mb-4 flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3">
+            <div className="mb-4 flex items-center gap-3 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950 px-4 py-3">
               <svg className="w-5 h-5 text-amber-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
               </svg>
-              <p className="flex-1 text-sm text-amber-800">
+              <p className="flex-1 text-sm text-amber-800 dark:text-amber-200">
                 Los horarios de entrada y salida usan valores por defecto (08:00 - 18:00).{' '}
                 <button
                   onClick={() => setActiveView('schedule')}

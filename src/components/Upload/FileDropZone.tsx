@@ -33,7 +33,7 @@ export function FileDropZone() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-8">
+    <div className="flex items-center justify-center min-h-screen p-8 bg-gray-50 dark:bg-gray-950">
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -43,8 +43,8 @@ export function FileDropZone() {
           w-full max-w-lg p-12 border-2 border-dashed rounded-2xl text-center cursor-pointer
           transition-all duration-200
           ${isDragging
-            ? 'border-blue-500 bg-blue-50 scale-105'
-            : 'border-gray-300 bg-white hover:border-blue-400 hover:bg-gray-50'
+            ? 'border-blue-500 bg-blue-50 dark:bg-blue-950 scale-105'
+            : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-gray-50 dark:hover:bg-gray-750'
           }
         `}
       >
@@ -59,24 +59,24 @@ export function FileDropZone() {
         {isLoading ? (
           <div className="flex flex-col items-center gap-3">
             <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-            <p className="text-gray-600">Procesando archivo...</p>
+            <p className="text-gray-600 dark:text-gray-400">Procesando archivo...</p>
           </div>
         ) : (
           <>
-            <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <svg className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
             </svg>
-            <p className="text-lg font-medium text-gray-700 mb-1">
+            <p className="text-lg font-medium text-gray-700 dark:text-gray-200 mb-1">
               Arrastra tu archivo Excel aquí
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               o haz clic para seleccionar (.xlsx, .xls, .csv)
             </p>
           </>
         )}
 
         {error && (
-          <p className="mt-4 text-sm text-red-600 bg-red-50 px-4 py-2 rounded-lg">
+          <p className="mt-4 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950 px-4 py-2 rounded-lg">
             {error}
           </p>
         )}
