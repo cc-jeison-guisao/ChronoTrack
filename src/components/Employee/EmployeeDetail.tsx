@@ -117,7 +117,7 @@ export function EmployeeDetail({ employeeId, onBack }: Props) {
     if (attendanceKeys.dateKey) tableColumns.push(attendanceKeys.dateKey);
     if (attendanceKeys.clockInKey) tableColumns.push(attendanceKeys.clockInKey);
     if (attendanceKeys.clockOutKey) tableColumns.push(attendanceKeys.clockOutKey);
-    tableColumns.push('Horas Trabajadas', 'Entrada Tardía', 'Salida Tardía');
+    tableColumns.push('Entrada Tardía', 'Salida Tardía');
 
     return {
       employeeName,
@@ -219,6 +219,7 @@ export function EmployeeDetail({ employeeId, onBack }: Props) {
               <Tooltip
                 contentStyle={isDark ? { backgroundColor: '#1f2937', border: '1px solid #374151', color: '#f3f4f6' } : undefined}
                 labelStyle={isDark ? { color: '#f3f4f6' } : undefined}
+                itemStyle={isDark ? { color: '#f3f4f6' } : undefined}
               />
               <Legend wrapperStyle={isDark ? { color: '#d1d5db' } : undefined} />
             </PieChart>

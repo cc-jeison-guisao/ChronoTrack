@@ -49,14 +49,14 @@ export function DashboardLayout() {
                 Los horarios de entrada y salida usan valores por defecto (08:00 - 18:00).{' '}
                 <button
                   onClick={() => setActiveView('schedule')}
-                  className="font-semibold underline hover:text-amber-900"
+                  className="font-semibold underline hover:text-amber-900 dark:hover:text-amber-100"
                 >
                   Configurar horarios por departamento
                 </button>
               </p>
               <button
                 onClick={() => setAlertDismissed(true)}
-                className="text-amber-400 hover:text-amber-600 transition-colors"
+                className="text-amber-400 hover:text-amber-600 dark:hover:text-amber-200 transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
