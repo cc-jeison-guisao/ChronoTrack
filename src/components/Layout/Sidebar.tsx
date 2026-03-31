@@ -63,7 +63,7 @@ export function Sidebar({ activeView, onChangeView, onReset, isAttendance }: Pro
   return (
     <aside className="w-56 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col h-screen sticky top-0">
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-gray-100 dark:border-gray-800">
+      <div className="px-5 py-5 border-gray-100 dark:border-gray-800">
         <div className="flex items-center gap-2.5">
           <img src="/favicon.svg" alt="ChronoTrack" className="w-8 h-8 rounded-lg" />
           <span className="text-lg font-bold text-gray-900 dark:text-gray-100">ChronoTrack</span>
