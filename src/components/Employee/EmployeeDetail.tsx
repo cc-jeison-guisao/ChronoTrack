@@ -62,7 +62,7 @@ export function EmployeeDetail({ employeeId, onBack }: Props) {
     const idKey = attendanceKeys.userIdKey ?? attendanceKeys.userNameKey;
     if (!idKey) return null;
 
-    const empRows = rows.filter((r) => String(r[idKey] ?? '') === employeeId);
+    const empRows = rows.filter((r) => String(r[idKey] ?? '').trim() === employeeId.trim());
     if (empRows.length === 0) return null;
 
     const employeeName = attendanceKeys.userNameKey

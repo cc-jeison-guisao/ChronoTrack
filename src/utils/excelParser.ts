@@ -152,7 +152,18 @@ export function parseExcel(buffer: ArrayBuffer, sheetIndex = 0): ParsedData {
   const attendance = detectAttendanceMode(columns);
 
   if (!attendance.isAttendance) {
-    return { rows: filteredRows, columns, sheetName, sheetNames, isAttendance: false };
+    return {
+      rows: filteredRows, columns, sheetName, sheetNames, isAttendance: false,
+      attendanceKeys: {
+        clockInKey: attendance.clockInKey,
+        clockOutKey: attendance.clockOutKey,
+        userIdKey: attendance.userIdKey,
+        userNameKey: attendance.userNameKey,
+        dateKey: attendance.dateKey,
+        departmentKey: attendance.departmentKey,
+        pmOnDutyKey: attendance.pmOnDutyKey,
+      },
+    };
   }
 
   // Attendance mode: compute derived columns
@@ -170,16 +181,27 @@ export function parseExcel(buffer: ArrayBuffer, sheetIndex = 0): ParsedData {
     const effectiveClockOut = hasClockOut ? rawClockOut : rawPmOnDuty;
 
     // Compute minutes from raw values BEFORE formatting
-    const inMin = clockInKey ? timeToMinutes(row[clockInKey]) : null;
+    const rawInMin = clockInKey ? timeToMinutes(row[clockInKey]) : null;
     const outMin = effectiveClockOut ? timeToMinutes(effectiveClockOut) : null;
 
+    // Validation: if clock-in is >= 12:00 PM, treat as "no entry"
+    const NO_ENTRY_LIMIT = 12 * 60; // 12:00 in minutes
+    const noMarcoEntrada = rawInMin !== null && rawInMin >= NO_ENTRY_LIMIT;
+    const inMin = noMarcoEntrada ? null : rawInMin;
+
+    // If no entry was recorded and no clock-out exists, use the raw clock-in time as clock-out
+    const finalOutMin = (noMarcoEntrada && outMin === null) ? rawInMin : outMin;
+    const finalClockOutDisplay = (noMarcoEntrada && outMin === null && clockInKey)
+      ? timeToDisplay(row[clockInKey])
+      : (effectiveClockOut ? timeToDisplay(effectiveClockOut) : '—');
+
     // Write renamed columns with formatted values
-    newRow['Entrada'] = clockInKey ? timeToDisplay(row[clockInKey]) : '—';
-    newRow['Salida'] = effectiveClockOut ? timeToDisplay(effectiveClockOut) : '—';
+    newRow['Entrada'] = noMarcoEntrada ? '—' : (clockInKey ? timeToDisplay(row[clockInKey]) : '—');
+    newRow['Salida'] = finalClockOutDisplay;
 
     // Compute worked hours
-    if (inMin !== null && outMin !== null && outMin > inMin) {
-      const worked = outMin - inMin;
+    if (inMin !== null && finalOutMin !== null && finalOutMin > inMin) {
+      const worked = finalOutMin - inMin;
       newRow['Horas Trabajadas'] = minutesToDisplay(worked);
       newRow['_horasDecimal'] = parseFloat((worked / 60).toFixed(2));
     } else {
@@ -200,12 +222,12 @@ export function parseExcel(buffer: ArrayBuffer, sheetIndex = 0): ParsedData {
     }
 
     // Late exit: left after 18:00
-    if (outMin !== null && outMin > LATE_EXIT_LIMIT) {
-      const extraBy = outMin - LATE_EXIT_LIMIT;
+    if (finalOutMin !== null && finalOutMin > LATE_EXIT_LIMIT) {
+      const extraBy = finalOutMin - LATE_EXIT_LIMIT;
       newRow['Salida Tardía'] = `Extra ${minutesToDisplay(extraBy)}`;
       newRow['_salidaTardeMin'] = extraBy;
     } else {
-      newRow['Salida Tardía'] = outMin !== null ? 'A tiempo' : '—';
+      newRow['Salida Tardía'] = finalOutMin !== null ? 'A tiempo' : '—';
       newRow['_salidaTardeMin'] = 0;
     }
 

@@ -70,7 +70,7 @@ export function DashboardDepartmentDetail({ department, colorIndex, onBack, onSe
 
     return Array.from(map.entries())
       .map(([id, data]) => ({ id, ...data }))
-      .sort((a, b) => b.lateDays - a.lateDays);
+      .sort((a, b) => a.name.localeCompare(b.name, 'es-ES'));
   }, [parsedData, department]);
 
   // Derive summary from employeeSummaries

@@ -26,6 +26,16 @@ export function useFileUpload() {
             setError('El archivo está vacío o no contiene datos válidos.');
             return;
           }
+          if (!data.isAttendance) {
+            const missing: string[] = [];
+            const keys = data.attendanceKeys;
+            if (!keys?.clockInKey) missing.push('Hora de entrada (A M OnDuty / Clock In / Entrada)');
+            if (!keys?.clockOutKey) missing.push('Hora de salida (P M OffDuty / Clock Out / Salida)');
+            if (!keys?.userIdKey && !keys?.userNameKey) missing.push('Identificación del colaborador (User ID / Nombre)');
+            if (!keys?.dateKey) missing.push('Fecha (Date / Fecha)');
+            setError(`El archivo no contiene las columnas necesarias para asistencia.\n\nColumnas faltantes:\n• ${missing.join('\n• ')}`);
+            return;
+          }
           setData(data);
         } catch {
           setError('Error al leer el archivo. Asegúrate de que sea un Excel válido.');

@@ -76,7 +76,7 @@ export function FileDropZone() {
         )}
 
         {error && (
-          <p className="mt-4 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950 px-4 py-2 rounded-lg">
+          <p className="mt-4 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950 px-4 py-2 rounded-lg whitespace-pre-line text-left">
             {error}
           </p>
         )}

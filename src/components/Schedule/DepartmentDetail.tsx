@@ -17,7 +17,9 @@ export function DepartmentDetail({ department, onBack }: Props) {
 
   const employees = useMemo(() => {
     if (!deptSchedule) return [];
-    return deptSchedule.employees;
+    return [...deptSchedule.employees].sort((a, b) =>
+      a.employeeName.localeCompare(b.employeeName, 'es-ES')
+    );
   }, [deptSchedule]);
 
   const handleDeptEntryChange = useCallback((value: string) => {

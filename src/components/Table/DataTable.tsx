@@ -157,6 +157,31 @@ export function DataTable({ onSelectEmployee, departmentFilter }: Props) {
         </div>
       </div>
 
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-700 text-sm">
+          <span className="text-gray-500 dark:text-gray-400">
+            Página {page + 1} de {totalPages}
+          </span>
+          <div className="flex gap-1">
+            <button
+              onClick={() => setPage(page - 1)}
+              disabled={page === 0}
+              className="px-3 py-1 rounded border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700"
+            >
+              Anterior
+            </button>
+            <button
+              onClick={() => setPage(page + 1)}
+              disabled={page >= totalPages - 1}
+              className="px-3 py-1 rounded border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700"
+            >
+              Siguiente
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
@@ -189,7 +214,7 @@ export function DataTable({ onSelectEmployee, departmentFilter }: Props) {
                   key={i}
                   className={`border-t border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100 ${canClick ? 'cursor-pointer' : ''}`}
                   onClick={() => {
-                    if (canClick) onSelectEmployee(String(row[empKey] ?? ''));
+                    if (canClick) onSelectEmployee(String(row[empKey] ?? '').trim());
                   }}
                 >
                   {columns.map((col) => (
@@ -207,30 +232,6 @@ export function DataTable({ onSelectEmployee, departmentFilter }: Props) {
         </table>
       </div>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-gray-700 text-sm">
-          <span className="text-gray-500 dark:text-gray-400">
-            Página {page + 1} de {totalPages}
-          </span>
-          <div className="flex gap-1">
-            <button
-              onClick={() => setPage(page - 1)}
-              disabled={page === 0}
-              className="px-3 py-1 rounded border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700"
-            >
-              Anterior
-            </button>
-            <button
-              onClick={() => setPage(page + 1)}
-              disabled={page >= totalPages - 1}
-              className="px-3 py-1 rounded border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700"
-            >
-              Siguiente
-            </button>
-          </div>
-        </div>
-      )}
     </div>
 
     {/* Floating export button */}
